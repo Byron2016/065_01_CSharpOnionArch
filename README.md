@@ -123,3 +123,67 @@
 			}
 		}
 		```
+			
+	- Projects Name: SolutionApplication.Repository
+	- Framework: .NET 6.0 (Long-term support)
+	
+		- Add folders:
+		```
+		SolutionApplication.DTOs
+		└─── Interface 
+		│
+		└─── Repository
+	
+		```
+		
+		- References
+			- Add reference to SolutionApplication.DTOs
+			- Add reference to SolutionApplication.Database
+	
+		- Add interface ISpeakerRepository
+		```c#
+		using SolutionApplication.DTOs.Models;
+		
+		namespace SolutionApplication.Repository.Interface
+		{
+			public interface ISpeakerRepository
+			{
+				Task<List<SpeakerDTO>> GetSpeakers();
+			}
+		}
+		```
+		
+		- Add classes SpeakerDTO
+		```c#
+		using Microsoft.EntityFrameworkCore;
+		using SolutionApplication.Database.Context;
+		using SolutionApplication.Database.DbModels;
+		using SolutionApplication.DTOs.Models;
+		using SolutionApplication.Repository.Interface;
+		
+		namespace SolutionApplication.Repository.Repository
+		{
+			public class SpeakerRepository : ISpeakerRepository
+			{
+				private readonly ApplicationDBContext _context;
+		
+				public SpeakerRepository(ApplicationDBContext context)
+				{
+					_context = context;
+				}
+		
+				public async Task<List<SpeakerDTO>> GetSpeakers()
+				{
+					List<Speaker> speakerFromDB = await _context.Speakers.ToListAsync();
+		
+					List<SpeakerDTO> speakerDTO = speakerFromDB.Select(speaker => new SpeakerDTO()
+					{
+						SpeakerId = speaker.SpeakerId,
+						SpeakerName = speaker.SpeakerName
+					}).ToList();
+		
+					return speakerDTO;
+				}
+			}
+		}
+		```
