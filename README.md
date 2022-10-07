@@ -187,3 +187,75 @@
 			}
 		}
 		```
+		
+3. Front End
+	- References
+		- Add reference to SolutionApplication.DTOs
+		- Add reference to SolutionApplication.Database
+		
+	- Controllers
+		- Add a **API Controller**
+		```c#
+		using Microsoft.AspNetCore.Mvc;
+		using SolutionApplication.DTOs.Models;
+		using SolutionApplication.Repository.Interface;
+		
+		namespace WebAPI.Controllers
+		{
+			[Route("api/[controller]")]
+			[ApiController]
+			public class SpeakerController : ControllerBase
+			{
+				private readonly ISpeakerRepository _speakerRepository;
+		
+				public SpeakerController(ISpeakerRepository speakerRepository)
+				{
+					_speakerRepository = speakerRepository;
+				}
+		
+				[HttpGet]
+				public async Task<IActionResult> GetSpeakers()
+				{
+					List<SpeakerDTO> speakerFromRepository = await _speakerRepository.GetSpeakers();
+		
+					return Ok(speakerFromRepository);
+				}
+			}
+		}
+		```
+		
+	- Controllers
+		- Add a **API Controller**
+		```c#
+		using SolutionApplication.Database.Context;
+		using SolutionApplication.Repository.Interface;
+		using SolutionApplication.Repository.Repository;
+		
+		namespace WebAPI
+		{
+			public class Program
+			{
+				public static void Main(string[] args)
+				{
+					var builder = WebApplication.CreateBuilder(args);
+		
+					builder.Services.AddDbContext<ApplicationDBContext>();
+		
+					builder.Services.AddScoped<ISpeakerRepository, SpeakerRepository>();
+					
+					....
+				}
+			}
+		}
+		```
+	- Avoid migration error
+		- ERROR: Your startup project 'WebAPI' doesn't reference Microsoft.EntityFrameworkCore.Design. This package is required for the Entity Framework Core Tools to work. Ensure your startup project is correct, install the package, and try again.
+		```c#
+		dotnet add package Microsoft.EntityFrameworkCore.Tools --version 6.0.9--version 6.1.0
+		```
+	- Ejecute migration
+		- Go to Package Manager Console View and select SolutionApplication.Database project.
+			- add-migration MyFirstMigration -o Migrations
+				- Remove-migration 
+				- Get-Migration
+			- update-database -Verbose

@@ -1,3 +1,7 @@
+using SolutionApplication.Database.Context;
+using SolutionApplication.Repository.Interface;
+using SolutionApplication.Repository.Repository;
+
 namespace WebAPI
 {
     public class Program
@@ -5,6 +9,10 @@ namespace WebAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<ApplicationDBContext>();
+
+            builder.Services.AddScoped<ISpeakerRepository, SpeakerRepository>();
 
             // Add services to the container.
 
