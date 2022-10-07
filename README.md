@@ -259,3 +259,52 @@
 				- Remove-migration 
 				- Get-Migration
 			- update-database -Verbose
+			
+	- Add GetSpeakersById method
+	
+		- Add interface ISpeakerRepository
+		```c#
+		using SolutionApplication.DTOs.Models;
+		
+		namespace SolutionApplication.Repository.Interface
+		{
+			public interface ISpeakerRepository
+			{
+				....
+				Task<SpeakerDTO> GetSpeakersById(int id);
+			}
+		}
+		```
+		
+		- Add classes SpeakerDTO
+		```c#
+		....
+		
+		namespace SolutionApplication.Repository.Repository
+		{
+			public class SpeakerRepository : ISpeakerRepository
+			{
+				....
+		
+				public async Task<SpeakerDTO?> GetSpeakersById(int id)
+				{
+					Speaker? speakerFromDB = await _context.Speakers.FirstOrDefaultAsync(sp => sp.SpeakerId == id);
+		
+					SpeakerDTO speakerDTO;
+		
+					if (speakerFromDB != null)
+					{
+						speakerDTO = new SpeakerDTO()
+						{
+							SpeakerId = speakerFromDB.SpeakerId,
+							SpeakerName = speakerFromDB.SpeakerName
+						};
+		
+						return speakerDTO;
+					}
+		
+					return null;
+				}
+			}
+		}
+		```

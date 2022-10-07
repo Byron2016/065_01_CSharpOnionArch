@@ -22,5 +22,18 @@ namespace WebAPI.Controllers
 
             return Ok(speakerFromRepository);
         }
+
+        [HttpGet("id")]
+        public async Task<IActionResult> GetSpeakersById(int id)
+        {
+            SpeakerDTO speakerFromRepository = await _speakerRepository.GetSpeakersById(id);
+
+            if (speakerFromRepository != null)
+            {
+                return Ok(speakerFromRepository);
+            }
+
+            return NotFound();
+        }
     }
 }

@@ -27,5 +27,25 @@ namespace SolutionApplication.Repository.Repository
 
             return speakerDTO;
         }
+
+        public async Task<SpeakerDTO?> GetSpeakersById(int id)
+        {
+            Speaker? speakerFromDB = await _context.Speakers.FirstOrDefaultAsync(sp => sp.SpeakerId == id);
+
+            SpeakerDTO speakerDTO;
+
+            if (speakerFromDB != null)
+            {
+                speakerDTO = new SpeakerDTO()
+                {
+                    SpeakerId = speakerFromDB.SpeakerId,
+                    SpeakerName = speakerFromDB.SpeakerName
+                };
+
+                return speakerDTO;
+            }
+
+            return null;
+        }
     }
 }
